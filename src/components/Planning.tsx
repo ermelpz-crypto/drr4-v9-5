@@ -300,7 +300,7 @@ const Planning: React.FC = () => {
             
             <div className="relative">
               <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20 shadow-2xl">
-                <div className="aspect-video rounded-2xl overflow-hidden relative">
+                <div className="w-full h-96 md:h-[500px] lg:h-[600px] rounded-2xl overflow-hidden relative shadow-inner">
                   <iframe 
                     src="https://www.google.com/maps/d/embed?mid=12eKHRMUMYnO5lZOiaJQOA9cJD-xjXU8&hl=en&ehbc=2E312F" 
                     width="100%" 
@@ -310,11 +310,16 @@ const Planning: React.FC = () => {
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
                     title="Interactive Hazard Map - Pio Duran"
-                    className="w-full h-full"
+                    className="w-full h-full border-0"
                   />
                   
-                  {/* Overlay for better integration */}
-                  <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/10 via-transparent to-black/10 rounded-2xl"></div>
+                  {/* Subtle overlay for better integration */}
+                  <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/5 via-transparent to-black/5 rounded-2xl"></div>
+                  
+                  {/* Map label */}
+                  <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm text-blue-950 px-3 py-2 rounded-lg shadow-lg">
+                    <span className="text-sm font-semibold">Interactive Hazard Map</span>
+                  </div>
                 </div>
               </div>
             </div>

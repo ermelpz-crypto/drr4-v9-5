@@ -624,13 +624,69 @@ html {
   }
   
   .weather-widget {
-    z-index: 10;
+    z-index: 40;
     position: relative;
   }
   
   /* Ensure scroll indicator doesn't overlap weather widgets */
   .scroll-indicator {
-    bottom: 120px !important;
+    bottom: 140px !important;
+  }
+  
+  /* Fix navigation z-index issues */
+  .navigation-container {
+    z-index: 50;
+    position: relative;
+  }
+  
+  /* Prevent navigation menu duplication */
+  .mobile-nav-open {
+    overflow: hidden;
+  }
+  
+  /* Weather widget responsive improvements */
+  .weather-ticker {
+    font-size: 0.875rem;
+  }
+  
+  .weather-forecast-mobile {
+    padding: 0.5rem;
+  }
+  
+  .weather-forecast-mobile .grid {
+    gap: 0.25rem;
+  }
+  
+  .weather-card-mobile {
+    padding: 0.5rem;
+    min-height: auto;
+  }
+  
+  /* Interactive map responsive */
+  .interactive-map iframe {
+    min-height: 300px;
+  }
+}
+
+/* Tablet responsive improvements */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .interactive-map iframe {
+    min-height: 400px;
+  }
+  
+  .scroll-indicator {
+    bottom: 160px !important;
+  }
+}
+
+/* Large screen optimizations */
+@media (min-width: 1025px) {
+  .interactive-map iframe {
+    min-height: 500px;
+  }
+  
+  .scroll-indicator {
+    bottom: 180px !important;
   }
 }
 

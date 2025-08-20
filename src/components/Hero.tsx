@@ -94,9 +94,9 @@ const Hero: React.FC<HeroProps> = ({ onEmergencyClick, onIncidentClick }) => {
     }
   };
   return (
-    <section id="home" className="relative h-screen flex flex-col overflow-hidden">
+    <section id="home" className="relative h-screen flex flex-col overflow-hidden navigation-container">
       {/* Header */}
-      <div className="relative z-40">
+      <div className="relative z-50">
         <Navigation />
       </div>
 
@@ -148,13 +148,13 @@ const Hero: React.FC<HeroProps> = ({ onEmergencyClick, onIncidentClick }) => {
         </div>
 
         {/* Scroll Indicator */}
-        <div className="absolute bottom-16 md:bottom-20 left-0 right-0 flex justify-center z-30">
+        <div className="absolute bottom-32 md:bottom-36 lg:bottom-40 left-0 right-0 flex justify-center z-30">
           <button
             onClick={handleScrollClick}
-            className="text-white hover:text-yellow-400 transition-all duration-300 focus:outline-none transform hover:scale-110"
+            className="text-white hover:text-yellow-400 transition-all duration-300 focus:outline-none transform hover:scale-110 animate-bounce"
             aria-label="Scroll to next section"
           >
-            <div className="bg-white/20 backdrop-blur-sm rounded-full p-3 border border-white/30">
+            <div className="bg-white/20 backdrop-blur-sm rounded-full p-3 md:p-4 border border-white/30 shadow-lg">
               <ChevronDown className={`animate-bounce ${isScrolling ? 'animate-pulse' : ''}`} size={20} />
             </div>
           </button>

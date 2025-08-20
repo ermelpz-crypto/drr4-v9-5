@@ -171,13 +171,13 @@ const WeatherForecastWidget: React.FC = () => {
   }
 
   return (
-    <div className={`bg-white border-t-2 border-gray-300 border-b-2 border-gray-300 py-2 md:py-4 shadow-sm transition-all duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+    <div className={`bg-white border-t-4 border-blue-500 border-b-4 border-blue-500 py-2 md:py-4 shadow-lg transition-all duration-300 relative z-40 weather-forecast-mobile ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between mb-1">
           <div className="flex items-center space-x-2">
-            <Calendar className="text-blue-600" size={16} />
-            <h3 className="text-base font-semibold text-gray-900">5-Day Weather Forecast</h3>
-            <span className="text-xs text-gray-500">
+            <Calendar className="text-blue-600" size={14} />
+            <h3 className="text-sm md:text-base font-semibold text-gray-900">5-Day Weather Forecast</h3>
+            <span className="text-xs text-gray-500 hidden md:inline">
               (Updated every 6 hours)
             </span>
           </div>
@@ -195,22 +195,22 @@ const WeatherForecastWidget: React.FC = () => {
           {forecast.map((day, index) => (
             <div
               key={day.id}
-              className={`text-center p-2 md:p-3 rounded-xl transition-all duration-200 hover:shadow-lg hover:scale-105 ${
+              className={`text-center p-1 md:p-3 rounded-lg md:rounded-xl transition-all duration-200 hover:shadow-lg hover:scale-105 weather-card-mobile ${
                 index === 0 
-                  ? 'bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-900 shadow-md' 
+                  ? 'bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-900 md:border-2 shadow-md' 
                   : 'bg-gray-50 hover:bg-gray-100 border border-gray-200'
               } min-h-0`}
             >
-              <div className={`text-xs font-semibold mb-1 ${index === 0 ? 'text-blue-800' : 'text-gray-700'}`}>
+              <div className={`text-xs font-semibold mb-1 ${index === 0 ? 'text-blue-800' : 'text-gray-700'} truncate`}>
                 {getDayName(day.date)}
               </div>
               
-              <div className="flex justify-center mb-2">
+              <div className="flex justify-center mb-1 md:mb-2">
                 {getWeatherIcon(day.icon)}
               </div>
               
               <div className="space-y-1">
-                <div className={`text-xs md:text-sm font-bold ${getTemperatureColor(day.temperature_high)}`}>
+                <div className={`text-xs font-bold ${getTemperatureColor(day.temperature_high)}`}>
                   {day.temperature_high}°
                 </div>
                 <div className={`text-xs ${index === 0 ? 'text-blue-600' : 'text-gray-500'}`}>
@@ -220,7 +220,7 @@ const WeatherForecastWidget: React.FC = () => {
               
               <div className="mt-1 space-y-1">
                 <div className="flex items-center justify-center space-x-1">
-                  <Droplets size={10} className={index === 0 ? 'text-blue-600' : 'text-blue-400'} />
+                  <Droplets size={8} className={index === 0 ? 'text-blue-600' : 'text-blue-400'} />
                   <span className={`text-xs ${index === 0 ? 'text-blue-700' : 'text-gray-600'}`}>
                     {day.humidity}%
                   </span>
@@ -234,13 +234,13 @@ const WeatherForecastWidget: React.FC = () => {
                 
                 {day.wind_speed > 20 && (
                   <div className="flex items-center justify-center space-x-1">
-                    <Wind size={10} className="text-gray-500" />
+                    <Wind size={8} className="text-gray-500" />
                     <span className="text-xs text-gray-500">{day.wind_speed}km/h</span>
                   </div>
                 )}
               </div>
               
-              <div className={`text-xs mt-1 truncate ${index === 0 ? 'text-blue-700 font-medium' : 'text-gray-500'}`} title={day.condition}>
+              <div className={`text-xs mt-1 truncate ${index === 0 ? 'text-blue-700 font-medium' : 'text-gray-500'} hidden md:block`} title={day.condition}>
                 {day.condition}
               </div>
             </div>
@@ -248,7 +248,7 @@ const WeatherForecastWidget: React.FC = () => {
         </div>
         
         <div className="text-center mt-3">
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-gray-500 px-2">
             Weather data provided by{' '}
             <a 
               href="https://openweathermap.org" 
@@ -257,9 +257,9 @@ const WeatherForecastWidget: React.FC = () => {
               className="text-blue-600 hover:text-blue-800 underline inline-flex items-center"
             >
               OpenWeatherMap
-              <ExternalLink size={10} className="ml-1" />
+              <ExternalLink size={8} className="ml-1" />
             </a>
-            {' '}• Last updated: {new Date().toLocaleTimeString()}
+            <span className="hidden md:inline">{' '}• Last updated: {new Date().toLocaleTimeString()}</span>
           </p>
         </div>
       </div>

@@ -146,40 +146,40 @@ const WeatherTickerWidget: React.FC = () => {
   };
 
   return (
-    <div className={`bg-gradient-to-r ${getTemperatureColor(weatherData.temperature)} text-white py-3 px-4 shadow-lg border-t-4 border-yellow-500 border-b-2 border-yellow-400`}>
+    <div className={`bg-gradient-to-r ${getTemperatureColor(weatherData.temperature)} text-white py-2 md:py-3 px-4 shadow-lg border-t-4 border-yellow-500 border-b-4 border-yellow-500 relative z-40 weather-ticker`}>
       <div className="container mx-auto">
         <div className="flex items-center justify-between">
           {/* Weather Info - Scrolling Ticker */}
           <div className="flex-1 overflow-hidden">
-            <div className="flex items-center space-x-8 animate-marquee whitespace-nowrap">
+            <div className="flex items-center space-x-4 md:space-x-8 animate-marquee whitespace-nowrap">
               <div className="flex items-center space-x-3">
                 {getWeatherIcon(weatherData.condition)}
-                <span className={`font-bold text-lg ${getTemperatureTextColor(weatherData.temperature)}`}>
+                <span className={`font-bold text-base md:text-lg ${getTemperatureTextColor(weatherData.temperature)}`}>
                   {weatherData.temperature}°C
                 </span>
-                <span className={`${getTemperatureTextColor(weatherData.temperature)}`}>
+                <span className={`text-sm md:text-base ${getTemperatureTextColor(weatherData.temperature)}`}>
                   {weatherData.description}
                 </span>
               </div>
               
-              <div className="flex items-center space-x-6">
+              <div className="flex items-center space-x-3 md:space-x-6">
                 <div className="flex items-center space-x-1">
-                  <Droplets size={16} className={getTemperatureTextColor(weatherData.temperature)} />
-                  <span className={`text-sm ${getTemperatureTextColor(weatherData.temperature)}`}>
+                  <Droplets size={14} className={getTemperatureTextColor(weatherData.temperature)} />
+                  <span className={`text-xs md:text-sm ${getTemperatureTextColor(weatherData.temperature)}`}>
                     {weatherData.humidity}% Humidity
                   </span>
                 </div>
                 
                 <div className="flex items-center space-x-1">
-                  <Wind size={16} className={getTemperatureTextColor(weatherData.temperature)} />
-                  <span className={`text-sm ${getTemperatureTextColor(weatherData.temperature)}`}>
+                  <Wind size={14} className={getTemperatureTextColor(weatherData.temperature)} />
+                  <span className={`text-xs md:text-sm ${getTemperatureTextColor(weatherData.temperature)}`}>
                     {weatherData.wind_speed} km/h Wind
                   </span>
                 </div>
                 
                 <div className="flex items-center space-x-1">
-                  <Thermometer size={16} className={getTemperatureTextColor(weatherData.temperature)} />
-                  <span className={`text-sm ${getTemperatureTextColor(weatherData.temperature)}`}>
+                  <Thermometer size={14} className={getTemperatureTextColor(weatherData.temperature)} />
+                  <span className={`text-xs md:text-sm ${getTemperatureTextColor(weatherData.temperature)}`}>
                     Feels like {Math.round(weatherData.temperature + (weatherData.humidity > 70 ? 2 : 0))}°C
                   </span>
                 </div>
@@ -200,10 +200,10 @@ const WeatherTickerWidget: React.FC = () => {
                   href="https://openweathermap.org" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className={`${getTemperatureTextColor(weatherData.temperature)} hover:opacity-90 underline inline-flex items-center`}
+                  className={`${getTemperatureTextColor(weatherData.temperature)} hover:opacity-90 underline inline-flex items-center text-xs md:text-sm`}
                 >
                   OpenWeatherMap
-                  <ExternalLink size={12} className="ml-1" />
+                  <ExternalLink size={10} className="ml-1" />
                 </a>
                 {!isOnline && <span className="text-red-300 ml-2">(Offline)</span>}
               </div>
@@ -211,22 +211,22 @@ const WeatherTickerWidget: React.FC = () => {
           </div>
 
           {/* Controls */}
-          <div className="flex items-center space-x-3 ml-4">
+          <div className="flex items-center space-x-2 md:space-x-3 ml-2 md:ml-4">
             <div className="flex items-center space-x-1">
               {isOnline ? (
-                <Wifi size={16} className={`${getTemperatureTextColor(weatherData.temperature)} opacity-75`} />
+                <Wifi size={14} className={`${getTemperatureTextColor(weatherData.temperature)} opacity-75`} />
               ) : (
-                <WifiOff size={16} className="text-red-300" />
+                <WifiOff size={14} className="text-red-300" />
               )}
             </div>
             
             <button
               onClick={manualRefresh}
               disabled={isRefreshing}
-              className={`${getTemperatureTextColor(weatherData.temperature)} hover:opacity-80 transition-all duration-200 disabled:opacity-50 ${isRefreshing ? 'animate-spin' : 'hover:scale-110'}`}
+              className={`${getTemperatureTextColor(weatherData.temperature)} hover:opacity-80 transition-all duration-200 disabled:opacity-50 ${isRefreshing ? 'animate-spin' : 'hover:scale-110'} p-1`}
               title="Refresh weather data"
             >
-              <RefreshCw size={16} className={isRefreshing ? 'animate-spin' : ''} />
+              <RefreshCw size={14} className={isRefreshing ? 'animate-spin' : ''} />
             </button>
           </div>
         </div>

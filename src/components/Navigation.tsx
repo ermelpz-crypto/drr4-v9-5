@@ -97,14 +97,16 @@ const Navigation: React.FC<NavigationProps> = ({ variant = 'public' }) => {
   ];
 
   // Use dynamic navigation items if available, otherwise use default
-  const navigationTree = React.useMemo(() => {
+  const navigationItems = React.useMemo(() => {
     if (dynamicNavItems.length > 0) {
-      return buildNavigationTree(dynamicNavItems.map(item => ({
+      const mappedItems = dynamicNavItems.map(item => ({
         ...item,
         icon: getIconComponent(item.icon)
-      })));
+      }));
+      return buildNavigationTree(mappedItems);
     }
-    return publicNavItems.map(item => ({ ...item, children: [], id: item.path }));
+    // Return default items with proper structure for tree building
+    return publicNavItems.map(item => ({ ...item, children: [], id: item.path, parent_id: null }));
   }, [dynamicNavItems]);
 
   function getIconComponent(iconName: string) {
@@ -236,7 +238,7 @@ const Navigation: React.FC<NavigationProps> = ({ variant = 'public' }) => {
 
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center space-x-2">
-              {navigationTree.map((item) => renderNavigationItem(item, false))}
+              {navigationItems.map((item) => renderNavigationItem(item, false))}
               
               {/* Search Button */}
               <button
@@ -280,7 +282,7 @@ const Navigation: React.FC<NavigationProps> = ({ variant = 'public' }) => {
           {isOpen && (
             <div className="lg:hidden py-6 border-t border-blue-800/50 backdrop-blur-xl">
               <div className="space-y-2">
-                {navigationTree.map((item) => renderNavigationItem(item, true))}
+                {navigationItems.map((item) => renderNavigationItem(item, true))}
                 
                 {/* Mobile Search */}
                 <button

@@ -36,7 +36,6 @@ import NavigationManagement from './pages/admin/NavigationManagement';
 import UsersManagement from './pages/admin/UsersManagement';
 import IncidentReports from './pages/admin/IncidentReports';
 import Settings from './pages/admin/Settings';
-import WeatherManagement from './pages/admin/WeatherManagement';
 import VideoGallery from './pages/public/VideoGallery';
 import VideoManagement from './pages/admin/VideoManagement';
 
@@ -81,7 +80,6 @@ function App() {
                 }>
                   <Route index element={<Dashboard />} />
                   <Route path="emergency" element={<EmergencyManagement />} />
-                  <Route path="weather" element={<WeatherManagement />} />
                   <Route path="hotlines" element={<EmergencyHotlineManagement />} />
                   <Route path="news" element={<NewsManagement />} />
                   <Route path="services" element={<ServicesManagement />} />

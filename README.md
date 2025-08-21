@@ -97,16 +97,43 @@ The application uses the following main tables:
 
 ## 🔐 Authentication
 
-The system includes a demo authentication system with two user roles:
+The system uses Supabase authentication with secure user management:
 
-- **Admin** (`admin@mdrrmo.gov.ph` / `admin123`)
+### Setting Up Admin Users
+
+1. **Go to your Supabase Dashboard**
+2. **Navigate to Authentication → Users**
+3. **Click "Add User"**
+4. **Enter email and password**
+5. **Add user metadata for role assignment:**
+   ```json
+   {
+     "role": "admin",
+     "name": "Administrator Name"
+   }
+   ```
+
+### User Roles
+
+**Admin Role**
   - Full access to all features
   - User management capabilities
   - System settings control
+  - Emergency alert management
 
-- **Editor** (`editor@mdrrmo.gov.ph` / `editor123`)
+**Editor Role**
   - Content management access
   - Limited administrative features
+  - Cannot manage users or system settings
+
+### Security Features
+
+- **Supabase Authentication** with email/password
+- **Row Level Security (RLS)** on all database tables
+- **Role-based access control** through user metadata
+- **Secure session management** with automatic token refresh
+- **Input validation** and sanitization
+- **Rate limiting** for login attempts
 
 ## 🌐 Deployment
 

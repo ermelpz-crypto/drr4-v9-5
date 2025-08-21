@@ -37,7 +37,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const demoUsers = [
     {
       id: '1',
-      email: 'admin@mdrrmo.gov.ph',
+      email: 'admin@example.com',
       password: 'admin123',
       username: 'admin',
       role: 'admin' as const,
@@ -45,7 +45,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     },
     {
       id: '2',
-      email: 'editor@mdrrmo.gov.ph',
+      email: 'editor@example.com',
       password: 'editor123',
       username: 'editor',
       role: 'editor' as const,

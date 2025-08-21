@@ -21,8 +21,8 @@ const Login: React.FC = () => {
     try {
       // Map username to email for demo
       const emailMap: Record<string, string> = {
-        'admin': 'admin@mdrrmo.gov.ph',
-        'editor': 'editor@mdrrmo.gov.ph'
+        'admin': 'admin@example.com',
+        'editor': 'editor@example.com'
       };
       
       const email = emailMap[username] || username;
@@ -118,8 +118,8 @@ const Login: React.FC = () => {
           <div className="mt-6 p-4 bg-gray-50 rounded-lg">
             <h3 className="text-sm font-medium text-gray-700 mb-2">Demo Credentials:</h3>
             <div className="text-xs text-gray-600 space-y-1">
-              <p><strong>Admin:</strong> admin@mdrrmo.gov.ph / admin123</p>
-              <p><strong>Editor:</strong> editor@mdrrmo.gov.ph / editor123</p>
+              <p><strong>Admin:</strong> admin / admin123</p>
+              <p><strong>Editor:</strong> editor / editor123</p>
             </div>
           </div>
         </div>

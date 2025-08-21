@@ -143,6 +143,9 @@ const Login: React.FC = () => {
             </div>
           </div>
 
+          {/* Instructions */}
+          
+        </div>
 
         {/* Footer */}
         <div className="text-center mt-8">

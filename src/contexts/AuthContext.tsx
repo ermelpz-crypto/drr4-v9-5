@@ -4,10 +4,10 @@ import type { User as SupabaseUser } from '@supabase/supabase-js';
 
 interface User {
   id: string;
-  username: string;
   email: string;
   role: 'admin' | 'editor';
   name: string;
+  user_metadata?: any;
 }
 
 interface AuthContextType {
@@ -16,6 +16,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
   loading: boolean;
+  error: string | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -32,48 +33,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
-
-  // Demo users - In production, this would be handled by your backend
-  const demoUsers = [
-    {
-      id: '1',
-      email: 'admin@example.com',
-      password: 'admin123',
-      username: 'admin',
-      role: 'admin' as const,
-      name: 'MDRRMO Administrator'
-    },
-    {
-      id: '2',
-      email: 'editor@example.com',
-      password: 'editor123',
-      username: 'editor',
-      role: 'editor' as const,
-      name: 'Content Editor'
-    }
-  ];
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     // Check if user is already logged in
     const checkUser = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error('Session error:', error);
+          setError(error.message);
+          return;
+        }
+
         if (session?.user) {
-          // Map Supabase user to our user format
-          const demoUser = demoUsers.find(u => u.email === session.user.email);
-          if (demoUser) {
-            setUser({
-              id: demoUser.id,
-              username: demoUser.username,
-              email: demoUser.email,
-              role: demoUser.role,
-              name: demoUser.name
-            });
-            setIsAuthenticated(true);
-          }
+          await setUserFromSession(session.user);
         }
       } catch (error) {
         console.error('Error checking user session:', error);
+        setError('Failed to check authentication status');
       } finally {
         setLoading(false);
       }
@@ -83,21 +62,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      setError(null);
+      
       if (event === 'SIGNED_IN' && session?.user) {
-        const demoUser = demoUsers.find(u => u.email === session.user.email);
-        if (demoUser) {
-          setUser({
-            id: demoUser.id,
-            username: demoUser.username,
-            email: demoUser.email,
-            role: demoUser.role,
-            name: demoUser.name
-          });
-          setIsAuthenticated(true);
-        }
+        await setUserFromSession(session.user);
       } else if (event === 'SIGNED_OUT') {
         setUser(null);
         setIsAuthenticated(false);
+      } else if (event === 'TOKEN_REFRESHED' && session?.user) {
+        await setUserFromSession(session.user);
       }
       setLoading(false);
     });
@@ -105,38 +78,96 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => subscription.unsubscribe();
   }, []);
 
+  const setUserFromSession = async (supabaseUser: SupabaseUser) => {
+    try {
+      // Get user profile from database or use metadata
+      const { data: userProfile, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('email', supabaseUser.email)
+        .single();
+
+      let userData: User;
+
+      if (userProfile && !error) {
+        // User exists in our users table
+        userData = {
+          id: supabaseUser.id,
+          email: supabaseUser.email!,
+          role: userProfile.role || 'editor',
+          name: userProfile.name || supabaseUser.user_metadata?.name || supabaseUser.email!,
+          user_metadata: supabaseUser.user_metadata
+        };
+      } else {
+        // Use Supabase user metadata or defaults
+        userData = {
+          id: supabaseUser.id,
+          email: supabaseUser.email!,
+          role: supabaseUser.user_metadata?.role || 'editor',
+          name: supabaseUser.user_metadata?.name || supabaseUser.email!,
+          user_metadata: supabaseUser.user_metadata
+        };
+      }
+
+      setUser(userData);
+      setIsAuthenticated(true);
+
+      // Update last login in database if user exists
+      if (userProfile && !error) {
+        await supabase
+          .from('users')
+          .update({ last_login: new Date().toISOString() })
+          .eq('id', userProfile.id);
+      }
+    } catch (error) {
+      console.error('Error setting user from session:', error);
+      setError('Failed to load user profile');
+    }
+  };
+
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
       setLoading(true);
-      
-      // Check demo credentials
-      const demoUser = demoUsers.find(u => u.email === email && u.password === password);
-      if (!demoUser) {
+      setError(null);
+
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        setError('Please enter a valid email address');
         return false;
       }
 
-      // Sign in with Supabase (using email as both email and password for demo)
+      // Sign in with Supabase
       const { data, error } = await supabase.auth.signInWithPassword({
-        email: email,
+        email: email.trim(),
         password: password
       });
 
       if (error) {
-        // If user doesn't exist, create them
-        const { error: signUpError } = await supabase.auth.signUp({
-          email: email,
-          password: password
-        });
+        console.error('Login error:', error);
         
-        if (signUpError) {
-          console.error('Auth error:', signUpError);
-          return false;
+        // Handle specific error types
+        if (error.message.includes('Invalid login credentials')) {
+          setError('Invalid email or password. Please check your credentials.');
+        } else if (error.message.includes('Email not confirmed')) {
+          setError('Please confirm your email address before signing in.');
+        } else if (error.message.includes('Too many requests')) {
+          setError('Too many login attempts. Please wait a moment and try again.');
+        } else {
+          setError(error.message);
         }
+        return false;
       }
 
-      return true;
+      if (data.user) {
+        await setUserFromSession(data.user);
+        return true;
+      }
+
+      return false;
     } catch (error) {
       console.error('Login error:', error);
+      setError('An unexpected error occurred. Please try again.');
       return false;
     } finally {
       setLoading(false);
@@ -145,16 +176,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = async () => {
     try {
-      await supabase.auth.signOut();
-      setUser(null);
-      setIsAuthenticated(false);
+      setLoading(true);
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) {
+        console.error('Logout error:', error);
+        setError('Failed to sign out');
+      } else {
+        setUser(null);
+        setIsAuthenticated(false);
+        setError(null);
+      }
     } catch (error) {
       console.error('Logout error:', error);
+      setError('An error occurred during sign out');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, login, logout, loading }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      isAuthenticated, 
+      login, 
+      logout, 
+      loading, 
+      error 
+    }}>
       {children}
     </AuthContext.Provider>
   );

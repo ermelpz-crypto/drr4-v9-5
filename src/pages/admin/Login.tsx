@@ -1,43 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { Eye, EyeOff, Shield } from 'lucide-react';
+import { Eye, EyeOff, Shield, AlertTriangle, Loader } from 'lucide-react';
 
 const Login: React.FC = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
   
-  const { login } = useAuth();
+  const { login, loading: authLoading, error: authError, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/admin');
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError('');
 
     try {
-      // Map username to email for demo
-      const emailMap: Record<string, string> = {
-        'admin': 'admin@example.com',
-        'editor': 'editor@example.com'
-      };
-      
-      const email = emailMap[username] || username;
       const success = await login(email, password);
       if (success) {
         navigate('/admin');
-      } else {
-        setError('Invalid username or password');
       }
     } catch (err) {
-      setError('An error occurred. Please try again.');
+      console.error('Login submission error:', err);
     } finally {
       setIsLoading(false);
     }
   };
+
+  const isFormLoading = isLoading || authLoading;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-blue-950 flex items-center justify-center p-4">
@@ -45,12 +43,13 @@ const Login: React.FC = () => {
         {/* Logo and Title */}
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
-            <div className="bg-yellow-500 p-4 rounded-full">
+            <div className="bg-yellow-500 p-4 rounded-full shadow-lg">
               <Shield className="h-12 w-12 text-blue-950" />
             </div>
           </div>
           <h1 className="text-3xl font-bold text-white mb-2">MDRRMO Admin</h1>
           <p className="text-blue-200">Municipal Disaster Risk Reduction & Management Office</p>
+          <p className="text-blue-300 text-sm mt-1">Pio Duran, Albay</p>
         </div>
 
         {/* Login Form */}
@@ -59,25 +58,31 @@ const Login: React.FC = () => {
             Sign In to Dashboard
           </h2>
 
-          {error && (
-            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-red-600 text-sm">{error}</p>
+          {authError && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start">
+              <AlertTriangle className="text-red-500 mr-3 mt-0.5 flex-shrink-0" size={20} />
+              <div>
+                <h4 className="text-red-800 font-medium mb-1">Authentication Error</h4>
+                <p className="text-red-600 text-sm">{authError}</p>
+              </div>
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
-                Username
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                Email Address
               </label>
               <input
-                id="username"
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                placeholder="Enter your username"
+                placeholder="Enter your email address"
                 required
+                disabled={isFormLoading}
+                autoComplete="email"
               />
             </div>
 
@@ -94,11 +99,14 @@ const Login: React.FC = () => {
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors pr-12"
                   placeholder="Enter your password"
                   required
+                  disabled={isFormLoading}
+                  autoComplete="current-password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 disabled:opacity-50"
+                  disabled={isFormLoading}
                 >
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
@@ -107,19 +115,42 @@ const Login: React.FC = () => {
 
             <button
               type="submit"
-              disabled={isLoading}
-              className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={isFormLoading}
+              className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
             >
-              {isLoading ? 'Signing In...' : 'Sign In'}
+              {isFormLoading ? (
+                <>
+                  <Loader className="animate-spin mr-2" size={20} />
+                  Signing In...
+                </>
+              ) : (
+                'Sign In'
+              )}
             </button>
           </form>
 
-          {/* Demo Credentials */}
-          <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-            <h3 className="text-sm font-medium text-gray-700 mb-2">Demo Credentials:</h3>
+          {/* Security Notice */}
+          <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+            <div className="flex items-start">
+              <Shield className="text-blue-600 mr-2 mt-0.5 flex-shrink-0" size={16} />
+              <div>
+                <h3 className="text-sm font-medium text-blue-800 mb-1">Secure Access</h3>
+                <p className="text-xs text-blue-700">
+                  This system uses Supabase authentication with row-level security. 
+                  Only authorized personnel can access the admin dashboard.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Instructions */}
+          <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+            <h3 className="text-sm font-medium text-gray-700 mb-2">Access Instructions:</h3>
             <div className="text-xs text-gray-600 space-y-1">
-              <p><strong>Admin:</strong> admin / admin123</p>
-              <p><strong>Editor:</strong> editor / editor123</p>
+              <p>1. Create admin users in your Supabase Dashboard</p>
+              <p>2. Go to Authentication → Users → Add User</p>
+              <p>3. Set user metadata: <code>{"role": "admin"}</code></p>
+              <p>4. Use the created email and password to sign in</p>
             </div>
           </div>
         </div>

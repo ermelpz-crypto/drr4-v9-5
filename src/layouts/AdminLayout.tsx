@@ -119,11 +119,11 @@ const AdminLayout: React.FC = () => {
             <div className="flex items-center space-x-3 mb-3">
               <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
                 <span className="text-blue-950 font-bold text-sm">
-                  {user?.name.charAt(0)}
+                  {user?.name?.charAt(0) || user?.email?.charAt(0) || 'U'}
                 </span>
               </div>
               <div>
-                <p className="text-white text-sm font-medium">{user?.name}</p>
+                <p className="text-white text-sm font-medium">{user?.name || user?.email}</p>
                 <p className="text-gray-300 text-xs">{user?.role}</p>
               </div>
             </div>

@@ -65,7 +65,7 @@ const Dashboard: React.FC = () => {
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-600">Welcome back, {user?.name || 'Admin'}! Here's your MDRRMO overview.</p>
+        <p className="text-gray-600">Welcome back, {user?.name || user?.email || 'Admin'}! Here's your MDRRMO overview.</p>
       </div>
 
       {/* Stats Grid */}

@@ -127,7 +127,8 @@ const DatabaseSelector: React.FC = () => {
                     <li>Create a Supabase project at <a href="https://supabase.com" target="_blank" rel="noopener noreferrer" className="underline">supabase.com</a></li>
                     <li>Copy your project URL and anon key</li>
                     <li>Update your environment variables</li>
-                    <li>Run the database migrations</li>
+                    <li>Run the database migrations in SQL Editor</li>
+                    <li>Create demo users or use: admin@mdrrmo.gov.ph / admin123</li>
                   </ol>
                 </div>
               )}

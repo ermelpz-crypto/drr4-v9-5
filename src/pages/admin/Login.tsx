@@ -144,7 +144,18 @@ const Login: React.FC = () => {
           </div>
 
           {/* Instructions */}
-          
+          <div className="mt-6 p-4 bg-green-50 rounded-lg border border-green-200">
+            <div className="flex items-start">
+              <Shield className="text-green-600 mr-2 mt-0.5 flex-shrink-0" size={16} />
+              <div>
+                <h3 className="text-sm font-medium text-green-800 mb-1">Demo Credentials</h3>
+                <div className="text-xs text-green-700 space-y-1">
+                  <p><strong>Admin:</strong> admin@mdrrmo.gov.ph / admin123</p>
+                  <p><strong>Editor:</strong> editor@mdrrmo.gov.ph / editor123</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Footer */}

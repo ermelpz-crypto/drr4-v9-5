@@ -137,6 +137,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return false;
       }
 
+      console.log('Attempting login with:', { email, passwordLength: password.length });
+
       // Sign in with Supabase
       const { data, error } = await supabase.auth.signInWithPassword({
         email: email.trim(),
@@ -144,11 +146,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
 
       if (error) {
-        console.error('Login error:', error);
+        console.error('Supabase login error:', error);
         
         // Handle specific error types
         if (error.message.includes('Invalid login credentials')) {
-          setError('Invalid email or password. Please check your credentials.');
+          setError('Invalid email or password. Please check your credentials. For demo, try: admin@mdrrmo.gov.ph / admin123');
         } else if (error.message.includes('Email not confirmed')) {
           setError('Please confirm your email address before signing in.');
         } else if (error.message.includes('Too many requests')) {
@@ -160,10 +162,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       if (data.user) {
+        console.log('Login successful, user data:', data.user);
         await setUserFromSession(data.user);
         return true;
       }
 
+      console.warn('Login completed but no user data returned');
       return false;
     } catch (error) {
       console.error('Login error:', error);
